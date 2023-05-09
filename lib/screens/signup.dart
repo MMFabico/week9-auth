@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:week9_authentication/providers/user_provider.dart';
 import '../providers/auth_provider.dart';
 
 class SignupPage extends StatefulWidget {
@@ -121,15 +122,12 @@ class SignUpFormState extends State<SignUpForm> {
       child: ElevatedButton(
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            await context.read<AuthProvider>().signUp(
-                fnameController.text,
-                lnameController.text,
-                emailController.text,
-                passwordController.text);
+            await context
+                .read<AuthProvider>()
+                .signUp(emailController.text, passwordController.text);
+            await context.read<UserListProvider>().addUser(emailController.text,
+                fnameController.text, lnameController.text);
             if (context.mounted) Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Successfully signed up!')),
-            );
           }
         },
         child: const Text('Sign up', style: TextStyle(color: Colors.white)),

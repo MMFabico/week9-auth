@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:week9_authentication/providers/user_provider.dart';
 import '../providers/todo_provider.dart';
 import '../providers/auth_provider.dart';
 import '../screens/todo_page.dart';
@@ -7,7 +8,6 @@ import '../screens/user_details.dart';
 import '../screens/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +20,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => AuthProvider())),
+        ChangeNotifierProvider(create: ((context) => UserListProvider()))
       ],
       child: MyApp(),
     ),
@@ -43,10 +44,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/todo': (context) => const LoginPage(),
         '/user_details': (context) => const UserDetailsPage(),
-        
       },
     );
   }
 }
-
-

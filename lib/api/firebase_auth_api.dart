@@ -27,8 +27,7 @@ class FirebaseAuthAPI {
     }
   }
 
-  Future<void> signUp(
-      String fname, String lname, String email, String password) async {
+  Future<void> signUp(String email, String password) async {
     UserCredential credential;
     try {
       credential = await auth.createUserWithEmailAndPassword(
