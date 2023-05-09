@@ -11,55 +11,6 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
-    TextEditingController fnameController = TextEditingController();
-    TextEditingController lnameController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-
-    final fname = TextField(
-      controller: fnameController,
-      decoration: const InputDecoration(
-        hintText: "First Name",
-      ),
-    );
-
-    final lname = TextField(
-      controller: lnameController,
-      decoration: const InputDecoration(
-        hintText: "Last Name",
-      ),
-    );
-
-    final email = TextField(
-      controller: emailController,
-      decoration: const InputDecoration(
-        hintText: "Email",
-      ),
-    );
-
-    final password = TextField(
-      controller: passwordController,
-      obscureText: true,
-      decoration: const InputDecoration(
-        hintText: 'Password',
-      ),
-    );
-
-    final SignupButton = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ElevatedButton(
-        onPressed: () async {
-          await context.read<AuthProvider>().signUp(
-              fnameController.text,
-              lnameController.text,
-              emailController.text,
-              passwordController.text);
-          if (context.mounted) Navigator.pop(context);
-        },
-        child: const Text('Sign up', style: TextStyle(color: Colors.white)),
-      ),
-    );
-
     final backButton = Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: ElevatedButton(
@@ -82,14 +33,120 @@ class _SignupPageState extends State<SignupPage> {
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 25),
             ),
-            fname,
-            lname,
-            email,
-            password,
-            SignupButton,
+            SignUpForm(),
             backButton
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
+  @override
+  SignUpFormState createState() {
+    return SignUpFormState();
+  }
+}
+
+class SignUpFormState extends State<SignUpForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController fnameController = TextEditingController();
+    TextEditingController lnameController = TextEditingController();
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+
+    final fname = TextFormField(
+        controller: fnameController,
+        decoration: const InputDecoration(
+          hintText: "First Name",
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'First name is required!';
+          }
+          return null;
+        });
+
+    final lname = TextFormField(
+        controller: lnameController,
+        decoration: const InputDecoration(
+          hintText: "Last Name",
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Last name is required!';
+          }
+          return null;
+        });
+
+    final email = TextFormField(
+        controller: emailController,
+        decoration: const InputDecoration(
+          hintText: "Email",
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Email is required!';
+          } else if (!RegExp(
+                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+              .hasMatch(value)) {
+            return 'Invalid email address.';
+          }
+          return null;
+        });
+
+    final password = TextFormField(
+        controller: passwordController,
+        obscureText: true,
+        decoration: const InputDecoration(
+          hintText: 'Password',
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Password is required!';
+          } else if (value.length < 6) {
+            return 'Password must be at least 6 characters.';
+          }
+          return null;
+        });
+
+    final SignupButton = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: ElevatedButton(
+        onPressed: () async {
+          if (_formKey.currentState!.validate()) {
+            await context.read<AuthProvider>().signUp(
+                fnameController.text,
+                lnameController.text,
+                emailController.text,
+                passwordController.text);
+            if (context.mounted) Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Successfully signed up!')),
+            );
+          }
+        },
+        child: const Text('Sign up', style: TextStyle(color: Colors.white)),
+      ),
+    );
+
+    return Form(
+      key: _formKey,
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          fname,
+          lname,
+          email,
+          password,
+          SignupButton,
+        ],
       ),
     );
   }
